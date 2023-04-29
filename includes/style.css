@@ -1,0 +1,34 @@
+:root{
+    --amarelo: #fdb346;
+    --roxo: #313a87;
+}
+
+.header{
+    height:50px;
+    background:var(--amarelo);
+    color:#fff;
+    display:flex;
+    width:100%;
+    align-items:center;
+    justify-content: end;
+}
+
+.chat_opt{
+    justify-self: end;
+    width:40px;
+    height: 40px;
+    font-size: 18px;
+    border-radius:8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--roxo);
+    margin: 10px;
+}
+.chat_opt:hover{
+    background-color: #00000020;
+    cursor:pointer;
+}
+.chat_opt a:focus{
+    color: var(--roxo) !important;
+}
