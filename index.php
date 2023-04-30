@@ -1,6 +1,6 @@
 <?php
     if(!empty($query = ($qp = parse_url($_SERVER['REQUEST_URI'] ?? ''))['query'])) parse_str($query, $get);
-    define('GET', ($get ?? []));
+    define('GET', ($_GET ?? []));
 ?>
 <!DOCTYPE html>
 <html>
