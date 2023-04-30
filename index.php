@@ -1,7 +1,3 @@
-<?php
-    if(!empty($query = ($qp = parse_url($_SERVER['REQUEST_URI'] ?? ''))['query'])) parse_str($query, $_GET);
-    define('GET', ($_GET ?? []));
-?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -22,7 +18,7 @@
     <body>
         <div class="content" style="display:flex;">
         <?php
-            if(empty($view = (GET['v'] ?? ''))) $view = 'home';
+            if(empty($view = ($_REQUEST['v'] ?? ''))) $view = 'home';
             if(file_exists($vf = __DIR__."/views/$view/index.php"))
             @include_once($vf);
         ?>
