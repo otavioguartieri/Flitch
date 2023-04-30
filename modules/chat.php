@@ -1,40 +1,46 @@
 <?php
 include_once("../libs/globals.php");
-
-if ($_REQUEST['action']){
+if ($_REQUEST['action'] ?? ''){
     switch(($_REQUEST['action'] ?? '')){
-        case 'enviar':
-            $response = $conn->query("SELECT dados FROM chat WHERE `id` = '" . $_REQUEST['idconversa'] . "'");
-            if ($conn->affected_rows > 0) {
-                $row = $response->fetch_array(MYSQLI_NUM);
-                $mensagemArray = json_decode($row[0], true);
+        case 'send':
+            $newmessage = $conn->query("SELECT dados FROM chat WHERE id = '" . $_REQUEST['idconversa'] . "'");
+            $mensagemArrayNew = array(
+                    "id"=>$_REQUEST['idMensagem'], 
+                    "created"=>strtotime('now'), 
+                    "message"=>corrigirQuebraLinha(corrigirAspas(($_REQUEST['mensagem'] ?? ''))),
+                    "type"=>($_REQUEST['type'] ?? 'text'),
+                    "user"=>($_REQUEST['user'] ?? '0'),
+                    "visualized"=>($_REQUEST['visualized'] ?? '0'),
+                );
 
-                $mensagemArrayNew['id'] = $_REQUEST['idMensagem'] .'_'. rand(0, 9) . strtotime('now');
-                $mensagemArrayNew['info']['created'] = strtotime(date('Y-m-d H:i:s'));
-                $mensagemArrayNew['info']['type'] = ($_REQUEST['type'] ?? 'texto');
-                $mensagemArrayNew['info']['message'] = corrigirQuebraLinha(corrigirAspas($_REQUEST['mensagem']));
-                $mensagemArrayNew['info']['visualized'] = 'n';
+            if (mysqli_num_rows($newmessage) > 0) {
 
-                array_push($mensagemArray['mensagens'], $mensagemArrayNew);
-                $jsonDados = json_encode($mensagemArray);
+                $row = $newmessage->fetch_array(MYSQLI_BOTH);
+                $mensagemArray = json_decode($row['dados'],true);
+                $mensagemArray[] = $mensagemArrayNew;
 
-                $response = $conn->query("UPDATE chat SET `dados` = '$jsonDados' WHERE `id` = '" . $_REQUEST['idconversa'] . "'");
+                $newmessage = $conn->query("UPDATE chat SET dados = '".json_encode(array_values($mensagemArray))."' WHERE id = '" . $_REQUEST['idconversa'] . "'");
+            }else{
+                $mensagemArray = [];
+                $mensagemArray[] = $mensagemArrayNew;
+                $newmessage = $conn->query("INSERT INTO chat (dados) VALUES ('".json_encode(array_values($mensagemArray))."')");
             }
         break;
     } 
-    $getresponse = $conn->query("SELECT dados FROM chat WHERE `id` = '" . $_REQUEST['idconversa'] . "'");
-    if ($conn->affected_rows > 0) {
-        $row = $getresponse->fetch_array(MYSQLI_NUM);
-        exit(json_encode([
-            'data' => json_decode($row[0], true),
-            'result'=>'1',
-            'header'=>header('Content-Type: application/json')
-        ]));
-    }else{
-        exit(json_encode([
-            'data' => [],
-            'result'=>'-1',
-            'header'=>header('Content-Type: application/json')
-        ]));
-    }
+}
+
+$getresponse = $conn->query("SELECT dados FROM chat WHERE `id` = '" . $_REQUEST['idconversa'] . "'");
+if (mysqli_num_rows($getresponse) > 0) {
+    $row = $getresponse->fetch_array(MYSQLI_BOTH);
+    exit(json_encode([
+        'data' => array_values(json_decode($row['dados'],true)),
+        'result'=>'1',
+        'header'=>header('Content-Type: application/json')
+    ]));
+}else{
+    exit(json_encode([
+        'data' => [],
+        'result'=>'-1',
+        'header'=>header('Content-Type: application/json')
+    ]));
 }

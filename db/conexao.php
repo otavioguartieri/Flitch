@@ -1,7 +1,7 @@
 <?php
     $dbserver = "localhost";
     $dbuser = "root";
-    $dbpass = "";
+    $dbpass = "pk0ay18MchHQZcfl";
     $dbname = "flitch";
     $conn = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname);
     if (!$conn) {

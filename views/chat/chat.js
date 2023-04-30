@@ -1,39 +1,29 @@
 $(document).ready(function () {
-    $.ajax({
-        url: "modules/chat.php",
-        type: "post",
-        data: {
-            action: 'listar',
-            idconversa: '1'
-        },
-        success: function (resposta) {
-            var valor = JSON.parse(resposta);
-            if (valor.result) {
-                $.each(valor.dados.mensagens, function (chave, value) {
-                    $('.message-content').append(`<span>${value.info.mensagem}</span><br>`)
-                })
-            } else {
-                return
-            }
-        },
+    $.post("modules/chat.php",{
+        action: 'listar',
+        idconversa: url['id']}, 
+    function(data){
+        if (data.result < 0) return;
+        $('.message-content').html('');
+        $.each(data.data, function (index, item) {
+            $('.message-content').append(`<span class="message_box" id="${item.id}">${item.message}</span><br>`);
+        })
     });
-})
+});
 
-function enviar() {
-    if ($("#message_value").val() == '') {
-        return
-    }
-    $.ajax({
-        url: "modules/chat.php",
-        type: "post",
-        data: {
-            action: 'enviar',
-            mensagem: $("#message_value").val(),
-            idconversa: '1',
-            idMensagem: '1'
-        },
-        success: function (resposta) {
-            location.reload();
-        },
+function send() {
+    if ($("#message_value").val().trim() == '') return;
+    $.post("modules/chat.php",{
+        action: 'send',
+        mensagem: $("#message_value").val(),
+        idconversa:  url['id'],
+        idMensagem: $('.message_box').length+1
+    },
+    function(data){
+        if (data.result < 0) return;
+        $('.message-content').html('');
+        $.each(data.data, function (index, item) {
+            $('.message-content').append(`<span>${item.message}</span><br>`);
+        })
     });
 }
