@@ -1,3 +1,7 @@
+<?php
+    if(!empty($query = ($qp = parse_url($_SERVER['REQUEST_URI'] ?? ''))['query'])) parse_str($query, $_GET);
+    define('GET', ($_GET ?? []));
+?>
 <!DOCTYPE html>
 <html>
     <head>
