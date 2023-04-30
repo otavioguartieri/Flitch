@@ -23,7 +23,7 @@ if ($_REQUEST['action'] ?? ''){
             }else{
                 $mensagemArray = [];
                 $mensagemArray[] = $mensagemArrayNew;
-                $newmessage = $conn->query("INSERT INTO chat (dados) VALUES ('".json_encode(array_values($mensagemArray))."')");
+                $newmessage = $conn->query("INSERT INTO chat (users,dados,inclusao) VALUES ('".($_REQUEST['user'] ?? '0')."','".json_encode(array_values($mensagemArray))."','".strtotime('now')."')");
             }
         break;
     } 
