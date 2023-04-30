@@ -22,8 +22,9 @@
             if(file_exists($vf = __DIR__."/views/$view/index.php"))
             @include_once($vf);
         ?>
-        </div>
-    </body>
+    </div>
+</body>
+
 </html>
 <script>
 </script>
